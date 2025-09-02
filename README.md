@@ -22,5 +22,5 @@ playbook/
     └── vms_02.yml
 ```
 **Note:**
-  Server01 ==> Lanner NCA-1510
-  Server02 ==> Lanner NCA-1516
+  - Server01 ==> Lanner NCA-1510
+  - Server02 ==> Lanner NCA-1516
