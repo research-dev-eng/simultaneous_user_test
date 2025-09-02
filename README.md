@@ -6,7 +6,7 @@ Multiple users created by Vagrant and automated with Ansible to set all up the t
 
   
 This is the folder structure for both devices running Ubuntu 22.04 LTS. 
-
+```
 playbook/
 ├── server01/
 │   ├── Vagrantfile
@@ -20,7 +20,7 @@ playbook/
     ├── inventory/
     │   └── hosts.ini
     └── vms_02.yml
-
-Note:
+```
+**Note:**
   Server01 ==> Lanner NCA-1510
   Server02 ==> Lanner NCA-1516
