@@ -1,11 +1,16 @@
-# simultaneous_user_test
-Multiple users created by Vagrant and automated with Ansible to set all up the test environment. To better balance the traffic we have used two hardware devices:
+# Simultaneous User Test
 
-- Lanner NCA-1510 (8CPUs, 16GB RAM, 1TB) capacity for 20 Vagrant VMs.
-- Lanner NCA-1516 (16CPUs, 64GB, 1TB) capacity for 30 Vagrant VMs.
+This project creates multiple users with **Vagrant** and automates the setup of the test environment using **Ansible**.  
+To better balance traffic, we used two hardware devices:
 
-  
-This is the folder structure for both devices running Ubuntu 22.04 LTS. 
+- **Lanner NCA-1510** – 8 CPUs, 16GB RAM, 1TB (capacity for 20 Vagrant VMs)  
+- **Lanner NCA-1516** – 16 CPUs, 64GB RAM, 1TB (capacity for 30 Vagrant VMs)  
+
+---
+
+## 📂 Project Structure
+
+This is the folder structure for both devices running **Ubuntu 22.04 LTS**:
 ```
 playbook/
 ├── server01/
