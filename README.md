@@ -13,7 +13,7 @@ playbook/
 │   ├── ansible.cfg
 │   ├── inventory/
 │   │   └── hosts.ini
-│   └── vms_02.yml
+│   └── vms_01.yml
 └── server02/
     ├── Vagrantfile
     ├── ansible.cfg
