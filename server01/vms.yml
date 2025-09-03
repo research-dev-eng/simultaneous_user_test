@@ -1,0 +1,64 @@
+---
+# Playbook Name: Configure Vagrant Virtual Machines
+# Purpose:
+#   This playbook configures network interfaces, sets routing priorities,
+#   and sends a login request to a web portal for each VM in the inventory group "VMs".
+# Author: Felipe Campanaro
+# Date: 2025-08-15
+# Notes:
+#   - Requires Ansible to be run with 'become' privileges
+#   - Assumes interface names are enp0s8 (secondary) and enp0s3 (primary)
+#   - IP addresses and metrics are hardcoded for a lab environment
+# 
+# Usage:
+#   ansible-playbook vms.yml
+
+- name: Configure Vagrant Virtual Machines
+  hosts: VMs
+  become: yes
+
+  # User credentials mapped per VM hostname  
+  vars:
+    users:
+      client1: { username: "BR-MAC-USER1", password: "6817" }
+      client2: { username: "BR-MAC-USER2", password: "6513" }
+      client3: { username: "BR-MAC-USER3", password: "3460" }
+      client4: { username: "BR-MAC-USER4", password: "6486" }
+      client5: { username: "BR-MAC-USER5", password: "7378" }
+      client6: { username: "BR-MAC-USER6", password: "5388" }
+      client7: { username: "BR-MAC-USER7", password: "8083" }
+      client8: { username: "BR-MAC-USER8", password: "5046" }
+      client9: { username: "BR-MAC-USER9", password: "2520" }
+      client10: { username: "BR-MAC-USER10", password: "8013" }
+      client11: { username: "BR-MAC-USER11", password: "8720" }
+      client12: { username: "BR-MAC-USER12", password: "6263" }
+      client13: { username: "BR-MAC-USER13", password: "6862" }
+      client14: { username: "BR-MAC-USER14", password: "5704" }
+      client15: { username: "BR-MAC-USER15", password: "4500" }
+      client16: { username: "BR-MAC-USER16", password: "3210" }
+      client17: { username: "BR-MAC-USER17", password: "5523" }
+      client18: { username: "BR-MAC-USER18", password: "8486" }
+      client19: { username: "BR-MAC-USER19", password: "4373" }
+      client20: { username: "BR-MAC-USER20", password: "2107" }
+
+  tasks:
+    # 1. Enable secondary network interface (enp0s8)
+    - name: Bring up enp0s8
+      command: ip link set dev enp0s8
+
+    # 2. Set default route via enp0s8 with higher priority (metric 100)    
+    - name: Set priority for 172.20.0.1 via enp0s8
+      command: ip route change default via 172.20.0.1 dev enp0s8 metric 100
+   
+    # 3. Set backup default route via enp0s3 with lower priority (metric 200)
+    - name: Set priority for 10.0.2.2 via enp0s3
+      command: ip route replace default via 10.0.2.2 dev enp0s3 metric 200
+
+    # 4. Send HTTP POST login request to portal
+    # This uses VM-specific credentials from the 'users' variable
+    - name: Send login request with curl
+      shell: |
+        curl -d "username={{ users[inventory_hostname].username }}&password={{ users[inventory_hostname].password }}" \
+             -X POST http://launch.speedcast.com/login
+      args:
+        warn: false
