@@ -56,9 +56,29 @@
 
     # 4. Send HTTP POST login request to portal
     # This uses VM-specific credentials from the 'users' variable
-    - name: Send login request with curl
+    - name: Send login request to Antamedia with curl
       shell: |
         curl -d "username={{ users[inventory_hostname].username }}&password={{ users[inventory_hostname].password }}" \
              -X POST http://launch.speedcast.com/login
       args:
         warn: false
+
+    # 5. Update apt cache after login
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: yes
+
+    # 6. Install iperf3
+    - name: Install iperf3
+      apt:
+        name: iperf3
+        state: present
+      become: yes
+
+    # 7. Install traceroute
+    - name: Install traceroute
+      apt:
+        name: traceroute
+        state: present
+      become: yes
