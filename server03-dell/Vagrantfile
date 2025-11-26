@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  config.vm.usable_port_range = 2300..2600
+
+  (109..300).each do |i|
+    config.vm.define "client#{i}" do |client|
+      client.vm.box = "generic/debian11"
+      client.vm.box_version = "4.3.12"
+
+      client.vm.hostname = "client#{i}"
+
+      # MAC address válido (6 bytes)
+      hex = "%04X" % i
+      mac = "080027D1#{hex}"
+
+      # Porta SSH estável
+      ssh_port = 2300 + (i - 101)
+
+      client.vm.network "public_network",
+        bridge: "enp3s0",
+        mac: mac
+
+      client.vm.provider "virtualbox" do |vb|
+        vb.name = "client#{i}"
+        vb.memory = "300"
+      end
+    end
+  end
+end

@@ -1,0 +1,260 @@
+---
+
+# Playbook Name: Configure Vagrant Virtual Machines
+# Purpose:
+#   This playbook configures network interfaces, sets routing priorities,
+#   and sends a login request to a web portal for each VM in the inventory group "VMs".
+# Author: Felipe Campanaro
+# Date: 2025-08-15
+# Notes:
+#   - Requires Ansible to be run with 'become' privileges
+#   - Assumes interface names are enp0s8 (secondary) and enp0s3 (primary)
+#   - IP addresses and metrics are hardcoded for a lab environment
+#   
+# Usage:
+#   ansible-playbook vms.yml
+
+- name: Configure Vagrant Virtual Machines
+  hosts: VMs
+  become: yes
+
+  # User credentials mapped per VM hostname
+  vars:
+    users:
+      client109: { username: "BR-MAC-USER109", password: "6840" }
+      client110: { username: "BR-MAC-USER110", password: "8632" }
+      client111: { username: "BR-MAC-USER111", password: "3520" }
+      client112: { username: "BR-MAC-USER112", password: "5418" }
+      client113: { username: "BR-MAC-USER113", password: "8083" }
+      client114: { username: "BR-MAC-USER114", password: "1166" }
+      client115: { username: "BR-MAC-USER115", password: "4310" }
+      client116: { username: "BR-MAC-USER116", password: "7387" }
+      client117: { username: "BR-MAC-USER117", password: "4388" }
+      client118: { username: "BR-MAC-USER118", password: "4704" }
+      client119: { username: "BR-MAC-USER119", password: "7530" }
+      client120: { username: "BR-MAC-USER120", password: "8663" }
+      client121: { username: "BR-MAC-USER121", password: "7826" }
+      client122: { username: "BR-MAC-USER122", password: "1573" }
+      client123: { username: "BR-MAC-USER123", password: "2804" }
+      client124: { username: "BR-MAC-USER124", password: "2147" }
+      client125: { username: "BR-MAC-USER125", password: "1486" }
+      client126: { username: "BR-MAC-USER126", password: "7761" }
+      client127: { username: "BR-MAC-USER127", password: "4453" }
+      client128: { username: "BR-MAC-USER128", password: "5465" }
+      client129: { username: "BR-MAC-USER129", password: "1750" }
+      client130: { username: "BR-MAC-USER130", password: "8123" }
+      client131: { username: "BR-MAC-USER131", password: "8473" }
+      client132: { username: "BR-MAC-USER132", password: "8813" }
+      client133: { username: "BR-MAC-USER133", password: "3055" }
+      client134: { username: "BR-MAC-USER134", password: "7745" }
+      client135: { username: "BR-MAC-USER135", password: "1512" }
+      client136: { username: "BR-MAC-USER136", password: "6315" }
+      client137: { username: "BR-MAC-USER137", password: "3031" }
+      client138: { username: "BR-MAC-USER138", password: "2137" }
+      client139: { username: "BR-MAC-USER139", password: "7443" }
+      client140: { username: "BR-MAC-USER140", password: "1015" }
+      client141: { username: "BR-MAC-USER141", password: "6706" }
+      client142: { username: "BR-MAC-USER142", password: "6641" }
+      client143: { username: "BR-MAC-USER143", password: "7133" }
+      client144: { username: "BR-MAC-USER144", password: "6212" }
+      client145: { username: "BR-MAC-USER145", password: "6136" }
+      client146: { username: "BR-MAC-USER146", password: "2046" }
+      client147: { username: "BR-MAC-USER147", password: "1311" }
+      client148: { username: "BR-MAC-USER148", password: "3538" }
+      client149: { username: "BR-MAC-USER149", password: "7856" }
+      client150: { username: "BR-MAC-USER150", password: "5403" }
+      client151: { username: "BR-MAC-USER151", password: "4457" }
+      client152: { username: "BR-MAC-USER152", password: "5041" }
+      client153: { username: "BR-MAC-USER153", password: "6510" }
+      client154: { username: "BR-MAC-USER154", password: "3518" }
+      client155: { username: "BR-MAC-USER155", password: "5364" }
+      client156: { username: "BR-MAC-USER156", password: "3808" }
+      client157: { username: "BR-MAC-USER157", password: "4184" }
+      client158: { username: "BR-MAC-USER158", password: "1303" }
+      client159: { username: "BR-MAC-USER159", password: "2005" }
+      client160: { username: "BR-MAC-USER160", password: "5633" }
+      client161: { username: "BR-MAC-USER161", password: "4170" }
+      client162: { username: "BR-MAC-USER162", password: "3653" }
+      client163: { username: "BR-MAC-USER163", password: "3103" }
+      client164: { username: "BR-MAC-USER164", password: "2123" }
+      client165: { username: "BR-MAC-USER165", password: "1265" }
+      client166: { username: "BR-MAC-USER166", password: "1387" }
+      client167: { username: "BR-MAC-USER167", password: "2054" }
+      client168: { username: "BR-MAC-USER168", password: "2460" }
+      client169: { username: "BR-MAC-USER169", password: "6812" }
+      client170: { username: "BR-MAC-USER170", password: "3564" }
+      client171: { username: "BR-MAC-USER171", password: "1866" }
+      client172: { username: "BR-MAC-USER172", password: "1170" }
+      client173: { username: "BR-MAC-USER173", password: "7035" }
+      client174: { username: "BR-MAC-USER174", password: "3068" }
+      client175: { username: "BR-MAC-USER175", password: "4167" }
+      client176: { username: "BR-MAC-USER176", password: "3025" }
+      client177: { username: "BR-MAC-USER177", password: "4652" }
+      client178: { username: "BR-MAC-USER178", password: "2148" }
+      client179: { username: "BR-MAC-USER179", password: "4842" }
+      client180: { username: "BR-MAC-USER180", password: "6401" }
+      client181: { username: "BR-MAC-USER181", password: "7686" }
+      client182: { username: "BR-MAC-USER182", password: "6630" }
+      client183: { username: "BR-MAC-USER183", password: "6552" }
+      client184: { username: "BR-MAC-USER184", password: "1730" }
+      client185: { username: "BR-MAC-USER185", password: "5086" }
+      client186: { username: "BR-MAC-USER186", password: "5364" }
+      client187: { username: "BR-MAC-USER187", password: "2778" }
+      client188: { username: "BR-MAC-USER188", password: "7802" }
+      client189: { username: "BR-MAC-USER189", password: "3170" }
+      client190: { username: "BR-MAC-USER190", password: "1875" }
+      client191: { username: "BR-MAC-USER191", password: "7778" }
+      client192: { username: "BR-MAC-USER192", password: "5410" }
+      client193: { username: "BR-MAC-USER193", password: "1356" }
+      client194: { username: "BR-MAC-USER194", password: "4720" }
+      client195: { username: "BR-MAC-USER195", password: "8852" }
+      client196: { username: "BR-MAC-USER196", password: "8688" }
+      client197: { username: "BR-MAC-USER197", password: "7831" }
+      client198: { username: "BR-MAC-USER198", password: "4064" }
+      client199: { username: "BR-MAC-USER199", password: "2325" }
+      client200: { username: "BR-MAC-USER200", password: "1577" }
+      client201: { username: "BR-MAC-USER201", password: "1412" }
+      client202: { username: "BR-MAC-USER202", password: "8063" }
+      client203: { username: "BR-MAC-USER203", password: "7512" }
+      client204: { username: "BR-MAC-USER204", password: "5161" }
+      client205: { username: "BR-MAC-USER205", password: "8223" }
+      client206: { username: "BR-MAC-USER206", password: "1418" }
+      client207: { username: "BR-MAC-USER207", password: "2347" }
+      client208: { username: "BR-MAC-USER208", password: "1786" }
+      client209: { username: "BR-MAC-USER209", password: "8212" }
+      client210: { username: "BR-MAC-USER210", password: "1630" }
+      client211: { username: "BR-MAC-USER211", password: "5660" }
+      client212: { username: "BR-MAC-USER212", password: "1528" }
+      client213: { username: "BR-MAC-USER213", password: "2751" }
+      client214: { username: "BR-MAC-USER214", password: "3266" }
+      client215: { username: "BR-MAC-USER215", password: "2288" }
+      client216: { username: "BR-MAC-USER216", password: "6001" }
+      client217: { username: "BR-MAC-USER217", password: "2723" }
+      client218: { username: "BR-MAC-USER218", password: "8307" }
+      client219: { username: "BR-MAC-USER219", password: "2345" }
+      client220: { username: "BR-MAC-USER220", password: "2428" }
+      client221: { username: "BR-MAC-USER221", password: "1771" }
+      client222: { username: "BR-MAC-USER222", password: "8332" }
+      client223: { username: "BR-MAC-USER223", password: "7264" }
+      client224: { username: "BR-MAC-USER224", password: "3674" }
+      client225: { username: "BR-MAC-USER225", password: "4860" }
+      client226: { username: "BR-MAC-USER226", password: "3066" }
+      client227: { username: "BR-MAC-USER227", password: "8767" }
+      client228: { username: "BR-MAC-USER228", password: "3117" }
+      client229: { username: "BR-MAC-USER229", password: "4383" }
+      client230: { username: "BR-MAC-USER230", password: "3361" }
+      client231: { username: "BR-MAC-USER231", password: "6755" }
+      client232: { username: "BR-MAC-USER232", password: "1382" }
+      client233: { username: "BR-MAC-USER233", password: "1004" }
+      client234: { username: "BR-MAC-USER234", password: "4323" }
+      client235: { username: "BR-MAC-USER235", password: "8051" }
+      client236: { username: "BR-MAC-USER236", password: "7171" }
+      client237: { username: "BR-MAC-USER237", password: "3308" }
+      client238: { username: "BR-MAC-USER238", password: "8782" }
+      client239: { username: "BR-MAC-USER239", password: "7537" }
+      client240: { username: "BR-MAC-USER240", password: "5121" }
+      client241: { username: "BR-MAC-USER241", password: "6735" }
+      client242: { username: "BR-MAC-USER242", password: "7415" }
+      client243: { username: "BR-MAC-USER243", password: "1151" }
+      client244: { username: "BR-MAC-USER244", password: "4820" }
+      client245: { username: "BR-MAC-USER245", password: "3036" }
+      client246: { username: "BR-MAC-USER246", password: "7150" }
+      client247: { username: "BR-MAC-USER247", password: "8331" }
+      client248: { username: "BR-MAC-USER248", password: "4243" }
+      client249: { username: "BR-MAC-USER249", password: "4856" }
+      client250: { username: "BR-MAC-USER250", password: "2834" }
+      client251: { username: "BR-MAC-USER251", password: "8328" }
+      client252: { username: "BR-MAC-USER252", password: "3745" }
+      client253: { username: "BR-MAC-USER253", password: "5182" }
+      client254: { username: "BR-MAC-USER254", password: "6355" }
+      client255: { username: "BR-MAC-USER255", password: "2671" }
+      client256: { username: "BR-MAC-USER256", password: "4648" }
+      client257: { username: "BR-MAC-USER257", password: "7703" }
+      client258: { username: "BR-MAC-USER258", password: "7823" }
+      client259: { username: "BR-MAC-USER259", password: "1077" }
+      client260: { username: "BR-MAC-USER260", password: "2782" }
+      client261: { username: "BR-MAC-USER261", password: "4013" }
+      client262: { username: "BR-MAC-USER262", password: "3544" }
+      client263: { username: "BR-MAC-USER263", password: "8421" }
+      client264: { username: "BR-MAC-USER264", password: "5643" }
+      client265: { username: "BR-MAC-USER265", password: "3054" }
+      client266: { username: "BR-MAC-USER266", password: "4472" }
+      client267: { username: "BR-MAC-USER267", password: "7360" }
+      client268: { username: "BR-MAC-USER268", password: "6434" }
+      client269: { username: "BR-MAC-USER269", password: "6040" }
+      client270: { username: "BR-MAC-USER270", password: "2886" }
+      client271: { username: "BR-MAC-USER271", password: "4874" }
+      client272: { username: "BR-MAC-USER272", password: "5186" }
+      client273: { username: "BR-MAC-USER273", password: "6086" }
+      client274: { username: "BR-MAC-USER274", password: "4368" }
+      client275: { username: "BR-MAC-USER275", password: "8257" }
+      client276: { username: "BR-MAC-USER276", password: "8380" }
+      client277: { username: "BR-MAC-USER277", password: "5786" }
+      client278: { username: "BR-MAC-USER278", password: "6436" }
+      client279: { username: "BR-MAC-USER279", password: "3030" }
+      client280: { username: "BR-MAC-USER280", password: "3755" }
+      client281: { username: "BR-MAC-USER281", password: "6501" }
+      client282: { username: "BR-MAC-USER282", password: "3807" }
+      client283: { username: "BR-MAC-USER283", password: "3224" }
+      client284: { username: "BR-MAC-USER284", password: "1182" }
+      client285: { username: "BR-MAC-USER285", password: "5827" }
+      client286: { username: "BR-MAC-USER286", password: "8641" }
+      client287: { username: "BR-MAC-USER287", password: "1320" }
+      client288: { username: "BR-MAC-USER288", password: "3572" }
+      client289: { username: "BR-MAC-USER289", password: "3121" }
+      client290: { username: "BR-MAC-USER290", password: "7635" }
+      client291: { username: "BR-MAC-USER291", password: "3756" }
+      client292: { username: "BR-MAC-USER292", password: "6022" }
+      client293: { username: "BR-MAC-USER293", password: "5247" }
+      client294: { username: "BR-MAC-USER294", password: "7728" }
+      client295: { username: "BR-MAC-USER295", password: "4783" }
+      client296: { username: "BR-MAC-USER296", password: "2761" }
+      client297: { username: "BR-MAC-USER297", password: "6164" }
+      client298: { username: "BR-MAC-USER298", password: "2876" }
+      client299: { username: "BR-MAC-USER299", password: "1184" }
+      client300: { username: "BR-MAC-USER300", password: "6021" }
+      
+  tasks:
+    # 1. Enable secondary network interface (enp0s8)
+    - name: Bring up eth1
+      command: ip link set dev eth1
+    
+    # 2. Set default route via enp0s8 with higher priority (metric 100)
+    - name: Set priority for 172.20.0.1 via eth1
+          #command: ip route change default via 172.20.0.1 dev eth1
+      shell:
+        ip route change default via 172.20.0.1 dev eth1 
+      tags:
+        - task_two
+
+    # 3. Set backup default route via enp0s3 with lower priority (metric 200)
+    - name: Set priority for 10.0.2.2 via eth0
+      command: ip route change default via 10.0.2.2 dev eth0
+      tags:
+        - task_three
+    
+    # 4. Send HTTP POST login request to portal
+    # This uses VM-specific credentials from the 'users' variable
+    - name: Send login request with curl
+      shell: |
+        curl -d "username={{ users[inventory_hostname].username }}&password={{ users[inventory_hostname].password }}" \
+             -X POST http://launch.speedcast.com/login
+    # 5. Update apt cache after login
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: yes
+
+    # 6. Install iperf3
+    - name: Install iperf3
+      apt:
+        name: iperf3
+        state: present
+      become: yes
+
+    # 7. Install traceroute
+    # - name: Install traceroute
+    #  apt:
+    #    name: traceroute
+    #    state: present
+    #  become: yes
