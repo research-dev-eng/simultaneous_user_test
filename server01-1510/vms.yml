@@ -43,18 +43,21 @@
 
   tasks:
     # 1. Enable secondary network interface (enp0s8)
-    - name: Bring up enp0s8
-      command: ip link set dev enp0s8
+    #- name: Bring up enp0s8
+    # command: ip link set dev enp0s8
 
-    # 2. Set default route via enp0s8 with higher priority (metric 100)    
-    - name: Set priority for 172.20.0.1 via enp0s8
-      command: ip route change default via 172.20.0.1 dev enp0s8 metric 100
+    # 2. Set default route via eth1 with higher priority (metric 100)    
+    - name: Set priority for 172.20.0.1 via eth1
+      command: ip route replace default via 172.20.0.1 dev eth1 metric 100
    
     # 3. Set backup default route via enp0s3 with lower priority (metric 200)
-    - name: Set priority for 10.0.2.2 via enp0s3
-      command: ip route replace default via 10.0.2.2 dev enp0s3 metric 200
+    - name: Set priority for 10.0.2.2 via eth0
+      command: ip route replace default via 10.0.2.2 dev eth0 metric 200
 
-    # 4. Send HTTP POST login request to portal
+    - name: Delete default route for 10.0.2.2 via eth0
+      command: ip route del default via 10.0.2.2
+        
+      # 4. Send HTTP POST login request to portal
     # This uses VM-specific credentials from the 'users' variable
     - name: Send login request to Antamedia with curl
       shell: |
@@ -77,8 +80,8 @@
       become: yes
 
     # 7. Install traceroute
-    - name: Install traceroute
-      apt:
-        name: traceroute
-        state: present
-      become: yes
+    # - name: Install traceroute
+    #  apt:
+    #    name: traceroute
+    #    state: present
+    # become: yes
