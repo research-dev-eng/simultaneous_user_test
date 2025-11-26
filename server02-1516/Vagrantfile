@@ -1,0 +1,24 @@
+Vagrant.configure("2") do |config|
+  config.vm.usable_port_range = 2300..2400
+  
+  (21..108).each do |i|
+    config.vm.define "client#{i}" do |client|
+      config.vm.box = "generic/debian11"
+      config.vm.box_version = "4.3.12"
+    
+      client.vm.hostname = "client#{i}"
+    
+      hex = "%04X" % i
+      mac = "080027D1#{hex}"
+      
+      client.vm.network "public_network", 
+        bridge: "enp2s0f0", 
+        mac: mac
+
+      client.vm.provider "virtualbox" do |vb|
+        vb.name = "client#{i}"
+	vb.memory = "300"
+      end
+    end
+  end
+end

@@ -1,0 +1,152 @@
+---
+
+# Playbook Name: Configure Vagrant Virtual Machines
+# Purpose:
+#   This playbook configures network interfaces, sets routing priorities,
+#   and sends a login request to a web portal for each VM in the inventory group "VMs".
+# Author: Felipe Campanaro
+# Date: 2025-08-15
+# Notes:
+#   - Requires Ansible to be run with 'become' privileges
+#   - Assumes interface names are enp0s8 (secondary) and enp0s3 (primary)
+#   - IP addresses and metrics are hardcoded for a lab environment
+#   
+# Usage:
+#   ansible-playbook vms.yml
+
+- name: Configure Vagrant Virtual Machines
+  hosts: VMs
+  become: yes
+
+  # User credentials mapped per VM hostname
+  vars:
+    users:
+      client21: { username: "BR-MAC-USER21", password: "1365" }
+      client22: { username: "BR-MAC-USER22", password: "6015" }
+      client23: { username: "BR-MAC-USER23", password: "1451" }
+      client24: { username: "BR-MAC-USER24", password: "8756" }
+      client25: { username: "BR-MAC-USER25", password: "6642" }
+      client26: { username: "BR-MAC-USER26", password: "7005" }
+      client27: { username: "BR-MAC-USER27", password: "6583" }
+      client28: { username: "BR-MAC-USER28", password: "2381" }
+      client29: { username: "BR-MAC-USER29", password: "7656" }
+      client30: { username: "BR-MAC-USER30", password: "7260" }
+      client31: { username: "BR-MAC-USER31", password: "2703" }
+      client32: { username: "BR-MAC-USER32", password: "1200" }
+      client33: { username: "BR-MAC-USER33", password: "7640" }
+      client34: { username: "BR-MAC-USER34", password: "6443" }
+      client35: { username: "BR-MAC-USER35", password: "2168" }
+      client36: { username: "BR-MAC-USER36", password: "6754" }
+      client37: { username: "BR-MAC-USER37", password: "6333" }
+      client38: { username: "BR-MAC-USER38", password: "4625" }
+      client39: { username: "BR-MAC-USER39", password: "7352" }
+      client40: { username: "BR-MAC-USER40", password: "1840" }
+      client41: { username: "BR-MAC-USER41", password: "3146" }
+      client42: { username: "BR-MAC-USER42", password: "3117" }
+      client43: { username: "BR-MAC-USER43", password: "7404" }
+      client44: { username: "BR-MAC-USER44", password: "6385" }
+      client45: { username: "BR-MAC-USER45", password: "7205" }
+      client46: { username: "BR-MAC-USER46", password: "7878" }
+      client47: { username: "BR-MAC-USER47", password: "3144" }
+      client48: { username: "BR-MAC-USER48", password: "4421" }
+      client49: { username: "BR-MAC-USER49", password: "8436" }
+      client50: { username: "BR-MAC-USER50", password: "5154" }
+      client51: { username: "BR-MAC-USER51", password: "1020" }
+      client52: { username: "BR-MAC-USER52", password: "1857" }
+      client53: { username: "BR-MAC-USER53", password: "4487" }
+      client54: { username: "BR-MAC-USER54", password: "1386" }
+      client55: { username: "BR-MAC-USER55", password: "3632" }
+      client56: { username: "BR-MAC-USER56", password: "6425" }
+      client57: { username: "BR-MAC-USER57", password: "6350" }
+      client58: { username: "BR-MAC-USER58", password: "5436" }
+      client59: { username: "BR-MAC-USER59", password: "7651" }
+      client60: { username: "BR-MAC-USER60", password: "8385" }
+      client61: { username: "BR-MAC-USER61", password: "7716" }
+      client62: { username: "BR-MAC-USER62", password: "6652" }
+      client63: { username: "BR-MAC-USER63", password: "5586" }
+      client64: { username: "BR-MAC-USER64", password: "2655" }
+      client65: { username: "BR-MAC-USER65", password: "8347" }
+      client66: { username: "BR-MAC-USER66", password: "1633" }
+      client67: { username: "BR-MAC-USER67", password: "6373" }
+      client68: { username: "BR-MAC-USER68", password: "5680" }
+      client69: { username: "BR-MAC-USER69", password: "5757" }
+      client70: { username: "BR-MAC-USER70", password: "5710" }
+      client71: { username: "BR-MAC-USER71", password: "7373" }
+      client72: { username: "BR-MAC-USER72", password: "4002" }
+      client73: { username: "BR-MAC-USER73", password: "4465" }
+      client74: { username: "BR-MAC-USER74", password: "7582" }
+      client75: { username: "BR-MAC-USER75", password: "4700" }
+      client76: { username: "BR-MAC-USER76", password: "8021" }
+      client77: { username: "BR-MAC-USER77", password: "8337" }
+      client78: { username: "BR-MAC-USER78", password: "2414" }
+      client79: { username: "BR-MAC-USER79", password: "6237" }
+      client80: { username: "BR-MAC-USER80", password: "2273" }
+      client81: { username: "BR-MAC-USER81", password: "4336" }
+      client82: { username: "BR-MAC-USER82", password: "2608" }
+      client83: { username: "BR-MAC-USER83", password: "4676" }
+      client84: { username: "BR-MAC-USER84", password: "7130" }
+      client85: { username: "BR-MAC-USER85", password: "5241" }
+      client86: { username: "BR-MAC-USER86", password: "4013" }
+      client87: { username: "BR-MAC-USER87", password: "3200" }
+      client88: { username: "BR-MAC-USER88", password: "4782" }
+      client89: { username: "BR-MAC-USER89", password: "4287" }
+      client90: { username: "BR-MAC-USER90", password: "1714" }
+      client91: { username: "BR-MAC-USER91", password: "3741" }
+      client92: { username: "BR-MAC-USER92", password: "5187" }
+      client93: { username: "BR-MAC-USER93", password: "8833" }
+      client94: { username: "BR-MAC-USER94", password: "5020" }
+      client95: { username: "BR-MAC-USER95", password: "2855" }
+      client96: { username: "BR-MAC-USER96", password: "8217" }
+      client97: { username: "BR-MAC-USER97", password: "1646" }
+      client98: { username: "BR-MAC-USER98", password: "7658" }
+      client99: { username: "BR-MAC-USER99", password: "7658" }
+      client100: { username: "BR-MAC-USER100", password: "1067" }
+      client101: { username: "BR-MAC-USER101", password: "7354" }
+      client102: { username: "BR-MAC-USER102", password: "6280" }
+      client103: { username: "BR-MAC-USER103", password: "5326" }
+      client104: { username: "BR-MAC-USER104", password: "5064" }
+      client105: { username: "BR-MAC-USER105", password: "2484" }
+      client106: { username: "BR-MAC-USER106", password: "4462" }
+      client107: { username: "BR-MAC-USER107", password: "2167" }
+      client108: { username: "BR-MAC-USER108", password: "8674" }
+      
+  tasks:
+    # 1. Set default route via eth1 with higher priority (metric 100)
+    - name: Set priority for 172.20.0.1 via eth1
+      shell:
+        ip route change default via 172.20.0.1 dev eth1
+      tags:
+        - task_two
+
+    # 3. Set backup default route via enp0s3 with lower priority (metric 200)
+    - name: Set priority for 10.0.2.2 via eth0
+      command: ip route change default via 10.0.2.2 dev eth0
+      tags:
+        - task_three
+
+    # 4. Send HTTP POST login request to portal
+    # This uses VM-specific credentials from the 'users' variable
+    - name: Send login request with curl
+      shell: |
+        curl -d "username={{ users[inventory_hostname].username }}&password={{ users[inventory_hostname].password }}" \
+             -X POST http://launch.speedcast.com/login
+    
+    # 5. Update apt cache after login
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: yes
+
+    # 6. Install iperf3
+    - name: Install iperf3
+      apt:
+        name: iperf3
+        state: present
+      become: yes
+
+    # 7. Install traceroute
+    # - name: Install traceroute
+    #   apt:
+    #     name: traceroute
+    #     state: present
+    #   become: yes
